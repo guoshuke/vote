@@ -1,1 +1,2 @@
-# vote
+# vonte
+need npm install
