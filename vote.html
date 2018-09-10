@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+    <title>菜谱点赞</title>
+    <link href="node_modules/layui-layer/layer.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        img {
+            display: block;
+        }
+
+        .container {
+
+        }
+
+        .img {
+            width: 100%;
+        }
+
+        .vote {
+            height: 144px;
+            margin: 20px 7vw;
+
+        }
+
+        .item {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            width: 14vw;
+            height: 100%;
+            float: left;
+            margin: 0 1.5vw;
+            box-sizing: border-box;
+        }
+
+        .like {
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .bar {
+            background-color: #d99694;
+            min-height: 3px;
+            margin: 0px 2vw;
+        }
+
+        .number {
+            text-align: center;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <img class="img" src="image/1.jpg" alt="">
+    <div id="vote1" class="vote">
+    </div>
+    <img class="img" src="image/2.jpg" alt="">
+    <div id="vote2" class="vote">
+
+    </div>
+    <img class="img" src="image/3.jpg" alt="">
+</div>
+<script src="node_modules/jquery/dist/jquery.js"></script>
+<script src="node_modules/layui-layer/dist/layer.js"></script>
+<script>
+
+    let arr,arr2,temp,temp2
+    let array
+
+    console.log(temp);
+    $.ajax({
+        url: 'http://localhost:9200/sum',
+        type: 'POST',
+        data: {
+            datebegin: '2018-01-01',
+            bath: 1,
+            dateend: '2018-09-11'
+        },
+        success: function (arr2) {
+            console.log(arr2);
+            arr2.sort((a, b) => {
+                return a._id - b._id
+            })
+            array=arr2.slice(0)
+
+            initDom(arr2)
+
+        }
+    })
+    function initDom(arr2){
+        arr = arr2.slice(0)
+        arr = arr2.splice(5)
+        $('#vote1,#vote2').html('')
+        let temp =  arr2.slice(0).sort((a,b)=>{return b.count-a.count})[0].count
+        let temp2 = arr.slice(0).sort((a,b)=>{return b.count-a.count})[0].count
+        arr2.forEach((item, index) => {
+            $('#vote1').append(`<div class="item">
+                    <div class="bar" style="height:${item.count / temp * 100 + 'px'}"></div>
+                    <span class="number">${item.count}</span>
+                    <img class="like" src="image/11.png" data-index="${index + 1}" alt="">
+                </div>`)
+        })
+        arr.forEach((item,index)=> {
+            $('#vote2').append(`<div class="item">
+                    <div class="bar" style="height:${item.count / temp2 * 100 + 'px'}"></div>
+                    <span class="number">${item.count}</span>
+                    <img class="like" src="image/11.png" data-index="${index + 6}" alt="">
+                </div>`)
+        })
+    }
+    window.onload = function () {
+
+    }
+    $(document).on('click', '.like', function (e) {
+        let index = e.target.dataset.index
+        console.log(index);
+        $.ajax({
+            url:'http://localhost:9200/vote',
+            type: 'POST',
+            data: {
+                name: 'kek1'+index,
+                bath: 1,
+                vote: index
+            },
+            success:function (res) {
+                if(res=='succeed'){
+                   array[index-1].count++
+                    initDom(array.slice(0))
+                }else{
+
+                    layer.msg('您当天已经点过赞')
+                }
+            }
+        })
+    })
+
+</script>
+</body>
+</html>
