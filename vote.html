@@ -44,6 +44,12 @@
         .like {
             width: 100%;
             margin-top: 5px;
+            color: #fff;
+            background-color: #5280bc;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 13px;
+            padding:5px 0;
         }
 
         .bar {
@@ -126,7 +132,20 @@
             array=arr2.slice(0)
 
             initDom(arr2)
+        },
+        error(err){
+            var arr2=[]
+            for(var k = 0; k < number; k++){
+                arr2[k] = arr2[k] || { _id: k ,count: 0}
+            }
 
+
+            arr2.sort((a, b) => {
+                return a._id - b._id
+            })
+            array=arr2.slice(0)
+
+            initDom(arr2)
         }
     })
     function initDom(arr2){
@@ -139,7 +158,7 @@
             $('#vote1').append(`<div class="item">
                     <div class="bar" style="height:${item.count / temp * 100 + 'px'}"></div>
                     <span class="number">${item.count}</span>
-                    <img class="like" src="image/11.png" data-index="${index + 1}" alt="">
+                    <span class="like" data-index="${index + 1}" >点赞</span>
                 </div>`)
         })
         arr.forEach((item,index)=> {
@@ -172,6 +191,9 @@
 
                     layer.msg('您当天已经点过赞')
                 }
+            },
+            error(){
+                layer.msg('网络连接失败')
             }
         })
     })
