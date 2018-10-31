@@ -82,6 +82,12 @@
     let arr,arr2,temp,temp2
     let array
     let number = 10
+    var uid = localStorage.getItem('uid')
+    if(!uid){
+        uid = parseInt(Math.random()*100000000)     //uid是个八位数
+        localStorage.setItem('uid',uid)
+    }
+
 
     function dateToString(now){
         now = now || new Date()
@@ -110,7 +116,7 @@
         return dateTime;
     }
     $.ajax({
-        url: 'http://localhost:9200/sum',
+        url: '/sum',
         type: 'POST',
         data: {
             datebegin: '2018-01-01',
@@ -176,10 +182,10 @@
         let index = e.target.dataset.index
         console.log(index);
         $.ajax({
-            url:'http://localhost:9200/vote',
+            url:'/vote',
             type: 'POST',
             data: {
-                name: 'kek1'+index,
+                name: uid,
                 bath: 1,
                 vote: index
             },
